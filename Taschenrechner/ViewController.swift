@@ -38,24 +38,24 @@ class ViewController: NSViewController {
     
     @IBAction func berechnenClicked(_ sender: NSButton) {
         let aOptions = [opDivision, opMultiplikation, opAddition, opSubtraktion]
-        let aCalculator = [Double(eingabeZahl1.stringValue.replaceFirst(of: ",", with: ".").replaceAll(of: ",", with: "")), Double(eingabeZahl2.stringValue.replaceFirst(of: ",", with: ".").replaceAll(of: ",", with: ""))]
+        let aCalculator = [changeInDouble(sInput: (eingabeZahl1?.stringValue)!), changeInDouble(sInput: (eingabeZahl2?.stringValue)!)]
         let sErrorMessage = "Nicht definiert!"
         
         for (index, op) in aOptions.enumerated(){
             if(op?.state == NSControl.StateValue.on){
                 switch(index){
                     case 2:
-                        labelErgebnis.doubleValue = aCalculator[0]! + aCalculator[1]!
+                        labelErgebnis.doubleValue = aCalculator[0] + aCalculator[1]
                         break
                     case 3:
-                        labelErgebnis.doubleValue = aCalculator[0]! - aCalculator[1]!
+                        labelErgebnis.doubleValue = aCalculator[0] - aCalculator[1]
                         break
                     case 1:
-                        labelErgebnis.doubleValue = aCalculator[0]! * aCalculator[1]!
+                        labelErgebnis.doubleValue = aCalculator[0] * aCalculator[1]
                         break
                     case 0:
                         if(aCalculator[1] != 0){
-                            labelErgebnis.doubleValue = aCalculator[0]! / aCalculator[1]!
+                            labelErgebnis.doubleValue = aCalculator[0] / aCalculator[1]
                         }
                         else{
                             labelErgebnis.stringValue = sErrorMessage
@@ -71,31 +71,31 @@ class ViewController: NSViewController {
 }
 
 
-extension String {
+func changeInDouble(sInput:String) -> Double{
+    var result = ""
+    var counter = 0
     
-    public func replaceFirst(of pattern:String,
-                             with replacement:String) -> String {
-        if let range = self.range(of: pattern){
-            return self.replacingCharacters(in: range, with: replacement)
-        }else{
-            return self
+    for char in sInput{
+        if(char == "," || char == "."){
+            counter += 1
+            if(counter <= 1){
+                result += "."
+                //replaced first solution
+            }
+            else{
+                result += ""
+                //cleared every other solutions
+            }
+        }
+        else{
+            result += String(char)
         }
     }
     
-    public func replaceAll(of pattern:String,
-                           with replacement:String,
-                           options: NSRegularExpression.Options = []) -> String{
-        do{
-            let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let range = NSRange(0..<self.utf16.count)
-            return regex.stringByReplacingMatches(in: self, options: [],
-                                                  range: range, withTemplate: replacement)
-        }catch{
-            NSLog("replaceAll error: \(error)")
-            return self
-        }
+    if(result.count > 0){
+        return Double(result)!
     }
-    
+    else{
+        return 0
+    }
 }
-
-//source String extension https://gist.github.com/mcxiaoke/b03f8c989c0cb36ccde50555b596f0f0
